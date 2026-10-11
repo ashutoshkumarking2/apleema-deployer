@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Apleema — Premium GitHub-to-Vercel Deployment Platform</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Full-Screen Session Restoration Loading Screen with Logo -->
+  <div id="authLoadingScreen" class="auth-loading-screen">
+    <img src="apleema.png" alt="Apleema Logo" class="loading-logo" onerror="this.style.display='none'">
+    <div class="spinner-pulse"></div>
+    <h2>Apleema</h2>
+    <p>Restoring your secure workspace...</p>
+  </div>
+
+  <div id="toastContainer" class="toast-container"></div>
+
+  <div class="app-shell">
+    
+    <!-- AUTH VIEW -->
+    <div id="authContainer" class="auth-wrapper" style="display: none;">
+      <div class="auth-hero-side">
+        <div class="brand-header">
+          <img src="apleema.png" alt="Apleema Logo" class="brand-logo" onerror="this.style.display='none'">
+          <span class="brand-title">Apleema</span>
+        </div>
+        <div class="hero-content">
+          <span class="badge-pill">Enterprise Deployment Suite</span>
+          <h1>Ship elite software with absolute precision.</h1>
+          <p>Connect your GitHub repositories and deploy seamlessly to Vercel with automated build orchestration.</p>
+        </div>
+        <div class="hero-footer-trust">
+          <span>🔒 Secured OAuth 2.0</span>
+          <span>⚡ Vercel API v13</span>
+        </div>
+      </div>
+
+      <div class="auth-form-side">
+        <div id="statusBanner" class="status-banner"></div>
+        <div class="auth-card">
+          <h2>Welcome back</h2>
+          <p class="auth-sub">Sign in to your persistent Apleema workspace</p>
+
+          <button id="btnGoogle" class="btn-provider">
+            <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.1 0-5.74-2.1-6.68-4.93H1.21v3.15C3.2 21.3 7.31 24 12 24z"/><path fill="#FBBC05" d="M5.32 14.27c-.24-.72-.38-1.49-.38-2.27s.14-1.55.38-2.27V6.58H1.21C.44 8.11 0 9.99 0 12s.44 3.89 1.21 5.42l4.11-3.15z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.2 2.7 1.21 6.58l4.11 3.15c.94-2.83 3.58-4.98 6.68-4.98z"/></svg>
+            Continue with Google
+          </button>
+
+          <button id="btnGithubAuth" class="btn-provider" style="margin-top: 10px;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+            Continue with GitHub
+          </button>
+
+          <div class="divider"><span>or email</span></div>
+
+          <form id="emailForm" class="auth-form" onsubmit="return false;">
+            <div class="field-group">
+              <label>Email address</label>
+              <input type="email" id="emailInput" class="input-control" placeholder="developer@apleema.app" required />
+            </div>
+            <div class="field-group">
+              <label>Password</label>
+              <input type="password" id="passwordInput" class="input-control" placeholder="••••••••••••" required />
+            </div>
+            <button type="submit" id="submitAuthBtn" class="btn-primary">Sign In</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- MAIN DASHBOARD -->
+    <div id="dashboardContainer" class="dashboard-wrapper">
+      
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="sidebar-brand">
+          <img src="apleema.png" alt="Logo" class="brand-logo" onerror="this.style.display='none'">
+          <span>Apleema</span>
+          <span class="workspace-badge">Pro</span>
+        </div>
+        <nav class="sidebar-menu">
+          <a href="#" class="menu-item active" data-view="overview" onclick="switchView('overview', event)">Overview</a>
+          <a href="#" class="menu-item" data-view="projects" onclick="switchView('projects', event)">Projects</a>
+          <a href="#" class="menu-item" data-view="deployments" onclick="switchView('deployments', event)">Deployments</a>
+          <a href="#" class="menu-item" data-view="repositories" onclick="switchView('repositories', event)">Git Repositories</a>
+          <a href="#" class="menu-item" data-view="domains" onclick="switchView('domains', event)">Domains</a>
+          <a href="#" class="menu-item" data-view="settings" onclick="switchView('settings', event)">Settings & Connected Accounts</a>
+        </nav>
+        <div class="sidebar-user-compact">
+          <img id="userAvatarSidebar" src="" alt="Avatar" class="user-avatar-sm">
+          <span id="userNameSidebar" class="user-name-sm">User</span>
+        </div>
+      </aside>
+
+      <!-- Main Content Area -->
+      <main class="main-content">
+        
+        <!-- TOP NAV HEADER -->
+        <header class="top-nav-bar">
+          <div class="top-nav-title">
+            <span id="currentBreadcrumb">Overview</span>
+          </div>
+          <div class="top-nav-actions">
+            <!-- THREE-DOT MENU -->
+            <div class="dropdown-container" id="accountDropdownContainer">
+              <button id="btnThreeDotMenu" class="btn-three-dot" aria-label="Account Menu" onclick="toggleAccountMenu(event)">
+                <span></span><span></span><span></span>
+              </button>
+
+              <div id="accountDropdownMenu" class="account-dropdown-menu">
+                <div class="dropdown-user-info">
+                  <img id="userAvatarDropdown" src="" alt="Avatar" class="user-avatar">
+                  <div>
+                    <span id="userNameDropdown" class="user-name">User Name</span>
+                    <span id="userEmailDropdown" class="user-email">email@domain.com</span>
+                  </div>
+                </div>
+                <div class="dropdown-divider"></div>
+                <div class="dropdown-status-section">
+                  <div class="status-row"><span>Google Auth:</span> <strong id="menuGoogleStatus" class="txt-success">Active</strong></div>
+                  <div class="status-row"><span>GitHub:</span> <strong id="menuGithubStatus">Connected</strong></div>
+                  <div class="status-row"><span>Vercel:</span> <strong id="menuVercelStatus" class="txt-success">Connected</strong></div>
+                </div>
+                <div class="dropdown-divider"></div>
+                <a href="#" class="dropdown-item" onclick="switchView('settings', event); closeAccountMenu();">⚙️ Account Settings</a>
+                <a href="#" class="dropdown-item" onclick="switchView('settings', event); closeAccountMenu();">🔗 Connected Accounts</a>
+                <div class="dropdown-divider"></div>
+                <button id="btnDropdownSignOut" class="dropdown-item dropdown-signout" onclick="handleSignOutAction()">
+                  ⎋ Sign Out
+                </button>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <!-- VIEW 1: OVERVIEW -->
+        <div id="viewOverview" class="dashboard-view active">
+          <div class="content-header">
+            <div>
+              <h1>Overview</h1>
+              <p>Manage your deployment workspace and recent project activity.</p>
+            </div>
+            <button id="btnConnectRepoOverview" class="btn-primary" onclick="triggerGitHubConnect()">Connect GitHub</button>
+          </div>
+
+          <div class="overview-stats-grid">
+            <div class="stat-card">
+              <span class="stat-label">Active Deployments</span>
+              <span class="stat-value" id="statDeploymentsCount">0</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-label">Authorized Repos</span>
+              <span class="stat-value" id="statReposCount">0</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-label">Vercel Status</span>
+              <span class="stat-value status-live">● Connected</span>
+            </div>
+          </div>
+
+          <div class="section-block">
+            <h3>Recent Activity & Deployments</h3>
+            <div id="recentActivityList" class="activity-list">
+              <p class="empty-text">No recent deployment activity. Import a repository to get started.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- VIEW 2: PROJECTS -->
+        <div id="viewProjects" class="dashboard-view">
+          <div class="content-header">
+            <div>
+              <h1>Projects</h1>
+              <p>Your imported Vercel-linked projects.</p>
+            </div>
+          </div>
+          <div id="projectsDisplay" class="repo-grid">
+            <div class="empty-state"><p>No projects imported yet. Go to Git Repositories to deploy.</p></div>
+          </div>
+        </div>
+
+        <!-- VIEW 3: DEPLOYMENTS -->
+        <div id="viewDeployments" class="dashboard-view">
+          <div class="content-header">
+            <div>
+              <h1>Deployments History</h1>
+              <p>Live status and history of all deployment builds.</p>
+            </div>
+          </div>
+          <div id="deploymentsDisplay" class="activity-list">
+            <div class="empty-state"><p>No deployment records found.</p></div>
+          </div>
+        </div>
+
+        <!-- VIEW 4: REPOSITORIES -->
+        <div id="viewRepositories" class="dashboard-view">
+          <div class="content-header">
+            <div>
+              <h1>Git Repositories</h1>
+              <p>Select a GitHub repository to configure deployment settings.</p>
+            </div>
+            <button id="btnConnectRepo" class="btn-primary" onclick="triggerGitHubConnect()">Connect GitHub Account</button>
+          </div>
+
+          <div class="search-filter-bar">
+            <input type="text" id="repoSearch" class="input-control" placeholder="Search repositories..." oninput="filterRepos()">
+          </div>
+
+          <div id="repoDisplay" class="repo-grid">
+            <div class="empty-state">
+              <p>No repositories connected yet. Click <strong>Connect GitHub Account</strong> above.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- VIEW 5: DOMAINS -->
+        <div id="viewDomains" class="dashboard-view">
+          <div class="content-header">
+            <div>
+              <h1>Domains</h1>
+              <p>Manage custom production domains for your deployments.</p>
+            </div>
+          </div>
+          <div class="section-block">
+            <p class="text-muted">Custom domains are automatically provisioned via Vercel edge integration upon successful deployment.</p>
+          </div>
+        </div>
+
+        <!-- VIEW 6: SETTINGS -->
+        <div id="viewSettings" class="dashboard-view">
+          <div class="content-header">
+            <div>
+              <h1>Settings & Connected Accounts</h1>
+              <p>Manage your secure integrations and provider connection states.</p>
+            </div>
+          </div>
+
+          <div class="settings-grid">
+            <div class="setting-card">
+              <div class="setting-card-header">
+                <svg width="24" height="24" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/><path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.1 0-5.74-2.1-6.68-4.93H1.21v3.15C3.2 21.3 7.31 24 12 24z"/><path fill="#FBBC05" d="M5.32 14.27c-.24-.72-.38-1.49-.38-2.27s.14-1.55.38-2.27V6.58H1.21C.44 8.11 0 9.99 0 12s.44 3.89 1.21 5.42l4.11-3.15z"/><path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.2 2.7 1.21 6.58l4.11 3.15c.94-2.83 3.58-4.98 6.68-4.98z"/></svg>
+                <div>
+                  <h4>Google Authentication</h4>
+                  <p class="sub-text" id="settingsGoogleEmail">Active session</p>
+                </div>
+              </div>
+              <span class="badge public">Connected</span>
+            </div>
+
+            <div class="setting-card">
+              <div class="setting-card-header">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+                <div>
+                  <h4>GitHub Integration</h4>
+                  <p class="sub-text" id="settingsGithubMeta">Connected</p>
+                </div>
+              </div>
+              <span class="badge public">Connected</span>
+            </div>
+
+            <div class="setting-card">
+              <div class="setting-card-header">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1L24 22H0L12 1Z"/></svg>
+                <div>
+                  <h4>Vercel Deployment API</h4>
+                  <p class="sub-text">Token Active (v13 API)</p>
+                </div>
+              </div>
+              <span class="badge public">Connected</span>
+            </div>
+          </div>
+        </div>
+
+      </main>
+    </div>
+
+  </div>
+
+  <!-- DEPLOYMENT MODAL -->
+  <div id="deployModal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Configure & Deploy Project</h3>
+        <button onclick="closeDeployModal()" class="btn-close">✕</button>
+      </div>
+      <div class="modal-body">
+        <form id="deployConfigForm" onsubmit="executeDeployment(event)">
+          <input type="hidden" id="confRepoOwner">
+          <input type="hidden" id="confRepoName">
+          <input type="hidden" id="confRepoId">
+
+          <div class="field-group">
+            <label>Project Name (Vercel)</label>
+            <input type="text" id="confProjectName" class="input-control" required placeholder="my-awesome-app">
+          </div>
+
+          <div class="field-group">
+            <label>Git Branch</label>
+            <input type="text" id="confBranch" class="input-control" required>
+          </div>
+
+          <div class="field-group">
+            <label>Framework Preset</label>
+            <select id="confFramework" class="input-control">
+              <option value="">Automatic Detection</option>
+              <option value="nextjs">Next.js</option>
+              <option value="react">React / Vite</option>
+              <option value="vue">Vue.js</option>
+              <option value="nuxtjs">Nuxt.js</option>
+              <option value="html">Static HTML</option>
+            </select>
+          </div>
+
+          <div class="field-group">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <label>Environment Variables (Env Files)</label>
+              <button type="button" class="btn-secondary" style="font-size: 0.75rem; padding: 4px 8px;" onclick="addEnvRow()">+ Add Variable</button>
+            </div>
+            <div id="envVarsBuilderContainer" class="env-builder-container"></div>
+          </div>
+
+          <div class="modal-actions">
+            <button type="button" onclick="closeDeployModal()" class="btn-secondary">Cancel</button>
+            <button type="submit" id="submitDeployBtn" class="btn-primary">Deploy to Vercel Now</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="auth.js"></script>
+</body>
+</html>
